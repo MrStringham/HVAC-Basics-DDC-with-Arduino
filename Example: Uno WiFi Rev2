@@ -1,0 +1,21 @@
+#include <WiFiNINA.h>
+
+char ssid[] = "yourNetwork"; // your network SSID (name)
+char pass[] = "secretPassword"; // your network password
+int status = WL_IDLE_STATUS;
+
+void setup() {
+  Serial.begin(9600);
+  while (status != WL_CONNECTED) {
+    Serial.print("Attempting to connect to Network named: ");
+    Serial.println(ssid);
+    status = WiFi.begin(ssid, pass);
+    delay(10000);
+  }
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+}
+
+void loop() {
+  // Here, you can add code to send HVAC data to a server or cloud service
+}
