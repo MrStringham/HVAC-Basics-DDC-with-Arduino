@@ -1,0 +1,5 @@
+if (temperature > 25) {
+  digitalWrite(coolingSystemPin, HIGH); // Turn on the cooling system
+} else {
+  digitalWrite(coolingSystemPin, LOW);  // Turn off the cooling system
+}
