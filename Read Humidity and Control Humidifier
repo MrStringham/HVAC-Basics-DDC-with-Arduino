@@ -1,0 +1,16 @@
+int humiditySensorPin = A0; // Humidity sensor connected to analog pin A0
+int humidifierPin = 7;      // Humidifier connected to digital pin 7
+
+void setup() {
+  pinMode(humidifierPin, OUTPUT);
+}
+
+void loop() {
+  int humidity = analogRead(humiditySensorPin);
+  if (humidity < 300) { // Threshold value for dry conditions
+    digitalWrite(humidifierPin, HIGH); // Activate humidifier
+  } else {
+    digitalWrite(humidifierPin, LOW);  // Deactivate humidifier
+  }
+  delay(1000); // Wait for a second before reading again
+}
