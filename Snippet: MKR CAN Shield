@@ -1,0 +1,23 @@
+#include <mcp2515.h>
+
+struct can_frame canMsg;
+MCP2515 mcp2515(10); // CS pin for MCP2515
+
+void setup() {
+  Serial.begin(9600);
+  mcp2515.reset();
+  mcp2515.setBitrate(CAN_500KBPS, MCP_8MHZ);
+  mcp2515.setNormalMode();
+
+  // Prepare a CAN message
+  canMsg.can_id = 0x036; // CAN ID
+  canMsg.can_dlc = 2; // Data length
+  canMsg.data[0] = 0x01; // Command byte
+  canMsg.data[1] = 0xFF; // Data byte (e.g., turn on a fan)
+}
+
+void loop() {
+  mcp2515.sendMessage(&canMsg);
+  Serial.println("Control command sent over CAN");
+  delay(2000); // Send every 2 seconds
+}
