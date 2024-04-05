@@ -1,0 +1,30 @@
+#include <Arduino_MKRGPS.h>
+
+void setup() {
+  Serial.begin(9600);
+  if (!GPS.begin()) {
+    Serial.println("Failed to initialize GPS!");
+    while (1);
+  }
+}
+
+void loop() {
+  if (GPS.available()) {
+    // Retrieve latitude and longitude
+    float latitude = GPS.latitude();
+    float longitude = GPS.longitude();
+    
+    // Check if within geo-fenced area
+    if (isWithinGeoFence(latitude, longitude)) {
+      // Logic to turn on HVAC unit
+    } else {
+      // Logic to turn off HVAC unit
+    }
+  }
+  delay(1000); // Update every second
+}
+
+bool isWithinGeoFence(float lat, float lon) {
+  // Simplified logic to determine if within a defined geographic boundary
+  return (lat >= MIN_LAT && lat <= MAX_LAT && lon >= MIN_LON && lon <= MAX_LON);
+}
