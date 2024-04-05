@@ -1,0 +1,32 @@
+#include <Arduino.h>
+
+const int relayPin = 0; // Assuming the relay is connected to pin 0 of the MKR Relay Shield
+const int tempSensorPin = A0; // Analog pin connected to the temperature sensor
+const float tempThreshold = 25.0; // Temperature threshold in Celsius
+
+void setup() {
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, LOW); // Ensure the fan is off initially
+  Serial.begin(9600);
+}
+
+void loop() {
+  float currentTemp = readTemperature(tempSensorPin);
+  Serial.print("Current Temperature: ");
+  Serial.println(currentTemp);
+
+  if (currentTemp > tempThreshold) {
+    digitalWrite(relayPin, HIGH); // Turn on the fan
+    Serial.println("Fan activated for cooling.");
+  } else {
+    digitalWrite(relayPin, LOW); // Turn off the fan
+    Serial.println("Fan deactivated.");
+  }
+  delay(60000); // Check temperature every minute
+}
+
+float readTemperature(int pin) {
+  // Placeholder function for reading temperature from a sensor
+  // Convert sensor reading to temperature in Celsius
+  return analogRead(pin) * (5.0 / 1023.0) * 100; // Simplified conversion
+}
