@@ -1,0 +1,9 @@
+void setup() {
+  Serial.begin(9600); // Start serial communication at 9600 bits per second
+}
+
+void loop() {
+  int temperature = readTemperature(A1); // Assume readTemperature is defined
+  Serial.println(temperature); // Print the temperature to the serial monitor
+  delay(2000); // Wait for 2 seconds before the next reading
+}
