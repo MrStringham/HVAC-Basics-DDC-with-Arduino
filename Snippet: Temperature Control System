@@ -1,0 +1,32 @@
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+// Setup a oneWire instance to communicate with temperature sensors
+OneWire oneWire(2); // Pin 2 connected to DS18B20 sensor
+DallasTemperature sensors(&oneWire);
+
+int relayPin = 8; // Relay connected to pin 8
+
+float setpoint = 22.0; // Desired temperature in Celsius
+
+void setup() {
+  pinMode(relayPin, OUTPUT);
+  sensors.begin();
+  Serial.begin(9600);
+}
+
+void loop() {
+  sensors.requestTemperatures(); 
+  float currentTemp = sensors.getTempCByIndex(0);
+  
+  Serial.print("Current temperature is: ");
+  Serial.println(currentTemp);
+  
+  if(currentTemp < setpoint) {
+    digitalWrite(relayPin, HIGH); // Turn on heating element/fan
+  } else {
+    digitalWrite(relayPin, LOW); // Turn off heating element/fan
+  }
+  
+  delay(1000); // Delay for a bit to avoid spamming
+}
