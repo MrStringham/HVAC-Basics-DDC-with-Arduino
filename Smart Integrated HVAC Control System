@@ -1,0 +1,75 @@
+#include <SPI.h>
+#include <SD.h>
+#include <Ethernet.h>
+#include <Arduino_MKRENV.h>
+
+// Initialize the MKR ENV Shield
+if (!ENV.begin()) {
+  Serial.println("Failed to initialize MKR ENV Shield!");
+  while (1);
+}
+
+// Ethernet settings (assuming DHCP)
+EthernetClient ethClient;
+
+// Relay pins for the MKR Relay Shield
+const int fanRelayPin = 0; // Example pin for the fan relay
+const int heaterRelayPin = 1; // Example pin for the heater relay
+
+void setup() {
+  Serial.begin(9600);
+
+  // Initialize Ethernet connection
+  if (Ethernet.begin(ethClient) == 0) {
+    Serial.println("Failed to configure Ethernet using DHCP");
+    while (1);
+  }
+
+  // Setup relay pins
+  pinMode(fanRelayPin, OUTPUT);
+  pinMode(heaterRelayPin, OUTPUT);
+}
+
+void loop() {
+  // Read environmental data
+  float temperature = ENV.readTemperature();
+  float humidity = ENV.readHumidity();
+
+  // Simple control logic (placeholders for more complex algorithms)
+  if (temperature < 20) { // If temperature is below 20°C, turn on heater
+    digitalWrite(heaterRelayPin, HIGH);
+  } else {
+    digitalWrite(heaterRelayPin, LOW);
+  }
+
+  if (humidity > 60) { // If humidity is above 60%, turn on fan
+    digitalWrite(fanRelayPin, HIGH);
+  } else {
+    digitalWrite(fanRelayPin, LOW);
+  }
+
+  // Log data to SD card (with MKR MEM Shield)
+  File dataFile = SD.open("system_log.txt", FILE_WRITE);
+  if (dataFile) {
+    dataFile.print("Temperature: ");
+    dataFile.print(temperature);
+    dataFile.print(", Humidity: ");
+    dataFile.println(humidity);
+    dataFile.close();
+  }
+
+  // Send data over Ethernet (placeholder for sending to a server or BMS)
+  if (ethClient.connect("server.example.com", 80)) {
+    ethClient.print("GET /update?temp=");
+    ethClient.print(temperature);
+    ethClient.print("&hum=");
+    ethClient.print(humidity);
+    ethClient.println(" HTTP/1.1");
+    ethClient.println("Host: server.example.com");
+    ethClient.println("Connection: close");
+    ethClient.println();
+    ethClient.stop();
+  }
+
+  delay(60000); // Wait for a minute before next cycle
+}
