@@ -1,0 +1,27 @@
+#include <ArduinoBLE.h>
+
+void setup() {
+  Serial.begin(9600);
+  // Initialize BLE
+  if (!BLE.begin()) {
+    Serial.println("starting BLE failed!");
+    while (1);
+  }
+
+  // Set up BLE service and characteristics for HVAC control
+  setupBLEService();
+}
+
+void loop() {
+  // Advertise BLE service for local control by technicians
+  BLEDevice central = BLE.central();
+  if (central) {
+    Serial.print("Connected to central: ");
+    Serial.println(central.address());
+    // Code to interact with central device for HVAC control
+  }
+}
+
+void setupBLEService() {
+  // Example setup for BLE service and characteristics
+}
