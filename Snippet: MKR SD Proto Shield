@@ -1,0 +1,50 @@
+#include <SPI.h>
+#include <SD.h>
+
+File dataFile;
+
+void setup() {
+  Serial.begin(9600);
+  if (!SD.begin()) {
+    Serial.println("Initialization failed!");
+    return;
+  }
+  
+  dataFile = SD.open("HVAC_data.csv", FILE_WRITE);
+  // Write data header
+  if (dataFile) {
+    dataFile.println("Time,Temperature,Humidity,CO2");
+  }
+}
+
+void loop() {
+  // Example data collection
+  String dataString = "";
+  dataString += String(millis()) + ",";
+  dataString += String(readTemperature()) + ",";
+  dataString += String(readHumidity()) + ",";
+  dataString += String(readCO2());
+  
+  // Write data to SD card
+  if (dataFile) {
+    dataFile.println(dataString);
+    dataFile.flush(); // Ensure data is written to the card
+  }
+
+  delay(60000); // Log data every minute
+}
+
+float readTemperature() {
+  // Placeholder function for temperature sensor reading
+  return random(20, 25);
+}
+
+float readHumidity() {
+  // Placeholder function for humidity sensor reading
+  return random(30, 50);
+}
+
+float readCO2() {
+  // Placeholder function for CO2 sensor reading
+  return random(400, 800);
+}
