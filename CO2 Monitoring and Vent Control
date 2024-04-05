@@ -1,0 +1,24 @@
+#include <Wire.h>
+"CO2 Sensor Library"
+
+int co2SensorPin = A0; // Analog pin connected to CO2 sensor
+int ventilationFanPin = 3; // Digital pin controlling a relay for the fan
+
+void setup() {
+  pinMode(ventilationFanPin, OUTPUT);
+  Serial.begin(9600);
+  // Initialize CO2 sensor
+}
+
+void loop() {
+  int co2Level = readCO2(co2SensorPin); // Function to read CO2 levels
+  Serial.print("CO2 Level: ");
+  Serial.println(co2Level);
+  
+  if(co2Level > 1000) { // Threshold for CO2 levels in ppm
+    digitalWrite(ventilationFanPin, HIGH); // Increase ventilation
+  } else {
+    digitalWrite(ventilationFanPin, LOW); // Maintain or reduce ventilation
+  }
+  delay(10000); // Check every 10 seconds
+}
