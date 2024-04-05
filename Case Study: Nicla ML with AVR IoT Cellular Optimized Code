@@ -1,0 +1,87 @@
+#include <SPI.h>
+#include <Ethernet.h>
+#include <SD.h>
+#include <Arduino_MKRENV.h>
+
+// Network settings
+char server[] = "server.example.com"; 
+int port = 80; 
+
+EthernetClient ethClient;
+
+// Relay pins
+const int fanRelayPin = 2; // Adjusted for actual pinout
+const int heaterRelayPin = 3; // Adjusted for actual pinout
+
+// Temperature threshold
+const float TempThreshold = 20.0;
+// Humidity threshold
+const float HumidityThreshold = 60.0;
+
+void setup() {
+  Serial.begin(9600);
+
+  // Initialize Ethernet
+  if (Ethernet.begin(ethClient) == 0) {
+    Serial.println("Failed to configure Ethernet");
+    while (1);
+  }
+
+  // Initialize relay pins
+  pinMode(fanRelayPin, OUTPUT);
+  pinMode(heaterRelayPin, OUTPUT);
+  
+  // Initialize ENV Shield
+  if (!ENV.begin()) {
+    Serial.println("Failed to initialize MKR ENV Shield!");
+    while (1);
+  }
+}
+
+void loop() {
+  // Read sensor values
+  float temperature = ENV.readTemperature();
+  float humidity = ENV.readHumidity();
+
+  // Control logic
+  controlHVAC(temperature, humidity);
+
+  // Data logging
+  logData(temperature, humidity);
+
+  // Send data over Ethernet
+  sendData(temperature, humidity);
+
+  delay(60000); // Data collection interval
+}
+
+void controlHVAC(float temperature, float humidity) {
+  digitalWrite(fanRelayPin, humidity > HumidityThreshold ? HIGH : LOW);
+  digitalWrite(heaterRelayPin, temperature < TempThreshold ? HIGH : LOW);
+}
+
+void logData(float temperature, float humidity) {
+  File dataFile = SD.open("HVAC_data.csv", FILE_WRITE);
+  if (dataFile) {
+    dataFile.println(String(millis()) + "," + String(temperature) + "," + String(humidity));
+    dataFile.close();
+  }
+}
+
+void sendData(float temperature, float humidity) {
+  if (ethClient.connect(server, port)) {
+    ethClient.println("POST /data HTTP/1.1");
+    ethClient.println("Host: " + String(server));
+    ethClient.println("Content-Type: application/json");
+    ethClient.print("Content-Length: ");
+    ethClient.println(2 + 4 + 10 + 10); // Adjust based on actual data size
+    ethClient.println();
+    ethClient.print("{\"temp\":");
+    ethClient.print(temperature);
+    ethClient.print(",\"hum\":");
+    ethClient.print(humidity);
+    ethClient.println("}");
+    ethClient.println();
+    ethClient.stop();
+  }
+}
