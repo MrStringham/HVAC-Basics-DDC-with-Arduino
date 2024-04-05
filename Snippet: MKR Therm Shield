@@ -1,0 +1,22 @@
+#include <Thermocouple.h>
+
+// Initialize the thermocouple interface
+Thermocouple thermocouple(1); // Assuming pin 1 is used for thermocouple input
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  double temperature = thermocouple.readCelsius();
+  Serial.print("Boiler Temperature: ");
+  Serial.println(temperature);
+
+  // Safety check
+  if (temperature > MAX_SAFE_TEMP) {
+    // Trigger alert or system shutdown
+    Serial.println("Warning: Temperature exceeds safe limit!");
+  }
+
+  delay(5000); // Check temperature every 5 seconds
+}
