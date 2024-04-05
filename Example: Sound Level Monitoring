@@ -1,0 +1,21 @@
+#include <ArduinoSound.h>
+
+// Assuming an analog microphone is connected to A0
+const int micPin = A0;
+int soundLevel;
+
+void setup() {
+  Serial.begin(9600);
+  if (!AudioInI2S.begin(44100, 16)) {
+    Serial.println("Failed to initialize I2S!");
+    while (1); // Don't proceed, loop forever
+  }
+}
+
+void loop() {
+  soundLevel = analogRead(micPin);
+  Serial.print("Sound Level: ");
+  Serial.println(soundLevel);
+  // Here you can add logic to trigger alerts based on sound level thresholds
+  delay(1000); // Sample every second
+}
