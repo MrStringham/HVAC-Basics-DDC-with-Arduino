@@ -1,0 +1,36 @@
+#include <SPI.h>
+#include <SD.h>
+
+File dataFile;
+
+void setup() {
+  Serial.begin(9600);
+  // Ensure the SD card is initialized
+  if (!SD.begin()) {
+    Serial.println("Initialization failed!");
+    return;
+  }
+  dataFile = SD.open("hvac_data.txt", FILE_WRITE);
+}
+
+void loop() {
+  float temperature = readTemperature(); // Placeholder for temperature reading
+  float humidity = readHumidity(); // Placeholder for humidity reading
+  String systemState = getHVACState(); // Placeholder for retrieving system state
+  
+  // Log data with a timestamp
+  if (dataFile) {
+    dataFile.print("Timestamp: ");
+    dataFile.print(millis());
+    dataFile.print(", Temperature: ");
+    dataFile.print(temperature);
+    dataFile.print(", Humidity: ");
+    dataFile.print(humidity);
+    dataFile.print(", System State: ");
+    dataFile.println(systemState);
+    dataFile.close();
+  } else {
+    Serial.println("Error opening data file");
+  }
+  delay(60000); // Log every minute
+}
