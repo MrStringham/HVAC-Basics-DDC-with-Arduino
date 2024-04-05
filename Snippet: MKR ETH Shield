@@ -1,0 +1,30 @@
+#include <SPI.h>
+#include <Ethernet.h>
+
+// MAC address for the Ethernet shield
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+// IP address for the Ethernet shield
+IPAddress ip(192, 168, 1, 177);
+
+EthernetServer server(80); // Server will run on port 80
+
+void setup() {
+  Ethernet.begin(mac, ip);
+  server.begin();
+  Serial.begin(9600);
+  Serial.println("HVAC controller is online.");
+}
+
+void loop() {
+  // Listen for incoming clients
+  EthernetClient client = server.available();
+  if (client) {
+    Serial.println("New client connected");
+    // Perform actions based on client requests
+    while (client.connected()) {
+      // Handle client
+    }
+    client.stop();
+    Serial.println("Client disconnected");
+  }
+}
