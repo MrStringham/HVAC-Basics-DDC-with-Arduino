@@ -1,0 +1,24 @@
+// Pseudocode as specific implementation depends on the chosen display and libraries
+void setup() {
+  // Initialize the display
+  initializeDisplay();
+}
+
+void loop() {
+  // Update display with HVAC system status
+  displayHVACStatus(getHVACStatus());
+  delay(1000); // Update every second or as needed
+}
+
+void initializeDisplay() {
+  // Display initialization code
+}
+
+String getHVACStatus() {
+  // Code to get the current status of the HVAC system
+  return "Heating ON, Temp: 21°C";
+}
+
+void displayHVACStatus(String status) {
+  // Code to display the HVAC status on the screen
+}
